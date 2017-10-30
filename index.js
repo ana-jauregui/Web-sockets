@@ -7,10 +7,21 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+io.on('connection', (socket) => {
+  io.emit('loggedIn', 'user is connected')
+
+  socket.on('chat message', (message) => {
+    io.emit('chat message', message);
   });
+
+  socket.on('disconnect', () => {
+    io.emit('loggedOut', 'user disconnected')
+  });
+
+  socket.on('user-typing',  (message) => {
+    io.emit('currently-typing', message)
+  })
+
 });
 
 http.listen(port, function(){
